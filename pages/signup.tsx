@@ -1,4 +1,3 @@
-import { useSupabaseClient } from '@supabase/auth-helpers-react';
 import { useState } from 'react';
 import { signUp } from './api/auth';
 
@@ -7,7 +6,6 @@ const Signup = () => {
   const [confirmEmail, setConfirmEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const supabase = useSupabaseClient()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
