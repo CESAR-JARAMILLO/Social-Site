@@ -94,6 +94,21 @@ export async function getCurrentUserProfile() {
   }
 }
 
+export async function getCurrentSession() {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error('Error getting session:', error.message);
+    throw error;
+  }
+
+  if (data && 'session' in data) {
+    return data.session;
+  } else {
+    return error;
+  }
+}
+
 export async function updateUser(email: string, fullName: string, username: string, avatarUrl: string) {
   try {
     const { data: authData, error: authError } = await supabase.auth.updateUser({
