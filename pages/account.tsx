@@ -52,11 +52,7 @@ const Account = () => {
     e.preventDefault();
     try {
       await updateUser(email, fullName, username, avatarUrl);
-      setEmail('');
-      setFullName('');
-      setUsername('');
       alert('Update successful!');
-      router.push('/account');
     } catch (error) {
       alert('Failed to update user info.');
     }
