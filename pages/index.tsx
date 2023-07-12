@@ -1,11 +1,11 @@
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
-import { signOut, getCurrentUser } from './api/auth';
+import { signOut } from './api/auth';
 
 const Home = () => {
   const router = useRouter()
-
-  const [loading, setLoading] = useState(true);
+  const { isLoading, session, error } = useSessionContext();
 
   const handleLogout = async () => {
     await signOut();
@@ -13,21 +13,14 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const checkUser = async () => {
-      const user = await getCurrentUser();
-
-      if (user) {
-        setLoading(false);
-      } else {
-        setLoading(false);
-        router.push('/login');
+    if (!isLoading) {
+      if (!session) {
+        router.push('/login')
       }
-    };
+    }
+  }, [isLoading, session]);
 
-    checkUser()
-  }, [])
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>
   }
 
