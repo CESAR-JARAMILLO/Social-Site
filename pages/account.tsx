@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { getCurrentUser, getCurrentUserProfile, getCurrentSession, updateUser } from './api/auth';
+import { getCurrentUser, getCurrentUserProfile, getCurrentSession, updateUser, signOut } from './api/auth';
+import { deleteUser } from './api/adminAuth';
 import { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 
@@ -61,6 +62,20 @@ const Account = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      try {
+        const user = await getCurrentUser();
+        await deleteUser(user?.id);
+        alert('Account deleted successfully!');
+        signOut();
+        router.push('/login');
+      } catch (error) {
+        alert('Failed to delete account.');
+      }
+    }
+  };
+
   if (!session) {
     return (
       <p>Loading</p>
@@ -85,6 +100,7 @@ const Account = () => {
         </label>
         <button type="submit">Update Profile</button>
       </form>
+      <button onClick={handleDelete}>Delete Profile</button>
     </div>
   )
 }
