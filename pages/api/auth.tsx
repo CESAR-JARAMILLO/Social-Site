@@ -52,3 +52,19 @@ export async function signOut() {
     console.error('Error signing out:', error);
   }
 }
+
+export async function getCurrentUser() {
+  try {
+    const session = await supabase.auth.getSession();
+
+    if (session.data.session?.user) {
+      console.log('Current user:', session.data.session?.user);
+      return session.data.session?.user;
+    } else {
+      console.log('No user currently logged in.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching user:', error);
+  }
+}
