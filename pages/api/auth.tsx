@@ -93,3 +93,30 @@ export async function getCurrentUserProfile() {
     console.error('Error fetching user:', error);
   }
 }
+
+export async function updateUser(email: string, fullName: string, username: string, avatarUrl: string) {
+  try {
+    const { data: authData, error: authError } = await supabase.auth.updateUser({
+      email: email,
+    });
+
+    if (authError) {
+      throw authError;
+    }
+
+    const { data: userData, error: userError } = await supabase.from('profiles').update({
+      full_name: fullName,
+      username: username,
+      avatar_url: avatarUrl
+    }).eq('id', authData.user.id);
+
+    if (userError) {
+      throw userError;
+    }
+
+    return { authData, userData };
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+}
