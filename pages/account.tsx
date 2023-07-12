@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getCurrentUser, getCurrentUserProfile, getCurrentSession, updateUser, signOut } from './api/auth';
+import { getCurrentUserProfile, updateUser, signOut } from './api/auth';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import { deleteUser } from './api/adminAuth';
-import { Session } from '@supabase/supabase-js';
 import { useRouter } from 'next/router';
 
 const Account = () => {
@@ -9,14 +9,13 @@ const Account = () => {
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
-  const [session, setSession] = useState<Session | null>(null);
   const router = useRouter()
+  const { isLoading, session, error } = useSessionContext();
+  const user = session?.user
 
   useEffect(() => {
     const fetchAndSetUserData = async () => {
-      const user = await getCurrentUser();
       const userProfile = await getCurrentUserProfile();
-      const session = await getCurrentSession();
 
       if (user && user.email) {
         setEmail(user.email);
@@ -30,11 +29,10 @@ const Account = () => {
         router.push('/login');
       }
 
-      setSession(session);
     };
 
     fetchAndSetUserData();
-  }, []);
+  }, [session]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -61,7 +59,6 @@ const Account = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       try {
-        const user = await getCurrentUser();
         await deleteUser(user?.id);
         alert('Account deleted successfully!');
         signOut();
@@ -72,7 +69,7 @@ const Account = () => {
     }
   };
 
-  if (!session) {
+  if (isLoading) {
     return (
       <p>Loading</p>
     );
