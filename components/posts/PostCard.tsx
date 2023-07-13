@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getPosts } from '@/pages/api/postsAuth/postsAuth';
+import { getPosts, deletePost } from '@/pages/api/postsAuth/postsAuth';
 
 type Post = {
   content: string;
@@ -24,9 +24,16 @@ const PostCard = () => {
     fetchData();
   }, []);
 
-  const handleDelete = async () => {
-
-  }
+  const handleDelete = async (postId: string) => {
+    try {
+      await deletePost(postId);
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+    } catch (error: any) {
+      console.error('Error deleting comment:', error.message);
+    }
+  };
+  
+  
 
   return (
     <div>
@@ -35,7 +42,7 @@ const PostCard = () => {
         <div key={post.id}>
           <h3>{post.user_id}</h3>
           <p>{post.content}</p>
-          <button onClick={handleDelete}>delete</button>
+          <button onClick={() => handleDelete(post.id)}>delete</button>
         </div>
       ))}
     </div>
