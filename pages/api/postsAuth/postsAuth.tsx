@@ -24,4 +24,15 @@ export async function createPost(content: string) {
   return data;
 }
 
+export async function getPosts() {
+  const { data, error } = await supabase.from('posts').select();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
+
 
