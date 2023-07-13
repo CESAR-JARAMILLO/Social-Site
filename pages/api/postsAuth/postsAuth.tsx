@@ -34,5 +34,16 @@ export async function getPosts() {
   return data;
 }
 
+export async function deletePost(postId: string) {  
+  const { error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', postId);
 
+  if (error) {
+    throw error;
+  }
+
+  console.log('Deleted post:', postId);
+}
 
