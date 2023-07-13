@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getPosts, deletePost } from '@/pages/api/postsAuth/postsAuth';
+import EditPostFormCard from './EditPostFormCard'; // import EditPostFormCard
 
 type Post = {
   content: string;
@@ -9,14 +10,15 @@ type Post = {
 
 const PostCard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [editPostId, setEditPostId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getPosts();
         setPosts(data);
-      } catch (error) {
-        console.error('Error retrieving posts:', error);
+      } catch (error: any) {
+        console.error('Error retrieving posts:', error.message);
         // handle error here, you could set it to state and display in your UI
       }
     };
@@ -32,8 +34,19 @@ const PostCard = () => {
       console.error('Error deleting comment:', error.message);
     }
   };
-  
-  
+
+  const handleEdit = (postId: string) => {
+    setEditPostId(postId);
+  };
+
+  const handlePostUpdate = (postId: string, updatedText: string) => {
+    setPosts(prevPosts =>
+      prevPosts.map(post =>
+        post.id === postId ? { ...post, content: updatedText } : post
+      )
+    );
+    setEditPostId(null);
+  };
 
   return (
     <div>
@@ -41,8 +54,17 @@ const PostCard = () => {
       {posts.map((post) => (
         <div key={post.id}>
           <h3>{post.user_id}</h3>
-          <p>{post.content}</p>
+          {editPostId === post.id ? (
+            <EditPostFormCard
+              initialText={post.content}
+              postId={post.id}
+              onPostUpdate={handlePostUpdate}
+            />
+          ) : (
+            <p>{post.content}</p>
+          )}
           <button onClick={() => handleDelete(post.id)}>delete</button>
+          <button onClick={() => handleEdit(post.id)}>edit</button>
         </div>
       ))}
     </div>
