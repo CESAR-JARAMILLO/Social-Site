@@ -1,4 +1,4 @@
-import PostFormCard from '@/components/PostFormCard';
+import PostFormCard from '@/components/posts/PostFormCard';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
