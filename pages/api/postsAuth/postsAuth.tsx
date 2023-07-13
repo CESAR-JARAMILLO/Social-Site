@@ -47,3 +47,18 @@ export async function deletePost(postId: string) {
   console.log('Deleted post:', postId);
 }
 
+export async function updatePost(postId: string, newText: string) {
+  console.log('Attempting to update post with id:', postId);
+
+  const { data, error } = await supabase
+    .from('posts')
+    .update({ content: newText })
+    .eq('id', postId);
+
+  if (error) {
+    throw error;
+  }
+
+  console.log('Post updated successfully:', data);
+  return data;
+}
