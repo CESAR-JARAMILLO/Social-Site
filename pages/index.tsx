@@ -1,3 +1,4 @@
+import PostFormCard from '@/components/PostFormCard';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
@@ -26,9 +27,7 @@ const Home = () => {
 
   return (
     <>
-      <div>
-        Home
-      </div>
+      <PostFormCard />
       <button onClick={handleLogout}>Logout</button>
     </>
   )
