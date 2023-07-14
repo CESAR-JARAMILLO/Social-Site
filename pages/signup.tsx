@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { signUp } from './api/auth';
+import { Box, Button, Flex, Input, Link, useBreakpointValue, Heading } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 
 const Signup = () => {
   const [email, setEmail] = useState('')
   const [confirmEmail, setConfirmEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const router = useRouter()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -36,7 +39,6 @@ const Signup = () => {
       return;
     }
 
-    
     signUp(email, password)
 
     setEmail('');
@@ -45,53 +47,56 @@ const Signup = () => {
     setConfirmPassword('');
   };
 
+  const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
+
   return (
-    <div>
-      <h2>Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="emailConfirmation">Confirm Email:</label>
-          <input
-            type="email"
-            id="emailConfirmation"
-            name="emailConfirmation"
-            value={confirmEmail}
-            onChange={handleConfirmEmailChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <div>
-          <label htmlFor="passwordConfirmation">Confirm Password:</label>
-          <input
-            type="password"
-            id="passwordConfirmation"
-            name="passwordConfirmation"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-          />
-        </div>
-        <button type="submit">Sign up</button>
-      </form>
-    </div>
+    <Flex minHeight="100vh" alignItems="center" justifyContent="center">
+      <Box width={formWidth}>
+      <Heading textAlign="center" marginBottom="2em">Signup</Heading>
+        <form onSubmit={handleSubmit}>
+          <Flex direction="column" marginBottom="1em">
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Email"
+              marginBottom="1em"
+            />
+            <Input
+              type="email"
+              id="emailConfirmation"
+              name="emailConfirmation"
+              value={confirmEmail}
+              onChange={handleConfirmEmailChange}
+              placeholder="Confirm Email"
+              marginBottom="1em"
+            />
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Password"
+              marginBottom="1em"
+            />
+            <Input
+              type="password"
+              id="passwordConfirmation"
+              name="passwordConfirmation"
+              value={confirmPassword}
+              onChange={handleConfirmPasswordChange}
+              placeholder="Confirm Password"
+              marginBottom="1em"
+            />
+            <Button type="submit" colorScheme="blue">Sign up</Button>
+          </Flex>
+        </form>
+        <Link href="/login" color="blue.500">Already have an account?</Link>
+      </Box>
+    </Flex>
   )
 }
 
