@@ -24,6 +24,13 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
+  const handleButtonHover = {
+    backgroundColor: "blue.400",
+    color: "white",
+    // p: "10px",
+    borderRadius: "10px"
+  }
+
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
       <Flex mb={4} gap={4}>
@@ -44,12 +51,12 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
               />
             </PopoverTrigger>
             <PopoverContent mr={5}>
-              <Flex direction="column" p="5" gap={6}>
-                <Flex as="button" onClick={() => {handleDelete(post.id); onClose();}} gap={4} _hover={{ backgroundColor: "blue.400" }}>
+              <Flex direction="column" p="5" gap={2}>
+                <Flex as="button" onClick={() => {handleDelete(post.id); onClose();}} p={4} _hover={handleButtonHover}>
                   <FiTrash2 size={24} />
                   <Text>Delete Post</Text>
                 </Flex>
-                <Flex as="button" onClick={() => {handleEdit(post.id, post.content); onClose();}} gap={4} _hover={{ backgroundColor: "blue.400" }}>
+                <Flex as="button" onClick={() => {handleEdit(post.id, post.content); onClose();}} p={4} _hover={handleButtonHover}>
                   <FiEdit size={24} />
                   <Text>Edit Post</Text>
                 </Flex>
