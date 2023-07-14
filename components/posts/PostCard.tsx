@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getPosts, deletePost } from '@/pages/api/postsAuth/postsAuth';
-import EditPostFormCard from './EditPostFormCard'; // import EditPostFormCard
+import { getPosts, deletePost, updatePost } from '@/pages/api/postsAuth/postsAuth';
+import { Box, Button, Flex, Text, Input, useBreakpointValue, Textarea } from '@chakra-ui/react';
 
 type Post = {
   content: string;
@@ -11,6 +11,7 @@ type Post = {
 const PostCard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [editPostId, setEditPostId] = useState<string | null>(null);
+  const [editContent, setEditContent] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,39 +36,59 @@ const PostCard = () => {
     }
   };
 
-  const handleEdit = (postId: string) => {
+  const handleEdit = (postId: string, content: string) => {
     setEditPostId(postId);
+    setEditContent(content);
   };
 
-  const handlePostUpdate = (postId: string, updatedText: string) => {
-    setPosts(prevPosts =>
-      prevPosts.map(post =>
-        post.id === postId ? { ...post, content: updatedText } : post
-      )
-    );
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editPostId) return; // If editPostId is null, exit the function
+  
+    try {
+      await updatePost(editPostId, editContent);
+      setPosts(prevPosts =>
+        prevPosts.map(post =>
+          post.id === editPostId ? { ...post, content: editContent } : post
+        )
+      );
+      setEditPostId(null);
+    } catch (error: any) {
+      console.error('Error updating post:', error.message);
+    }
+  };
+  
+
+  const handleCancel = () => {
     setEditPostId(null);
+    setEditContent('');
   };
 
   return (
-    <div>
-      <h2>PostCard</h2>
+    <Flex direction="column" maxWidth="500px" margin="0 auto">
       {posts.map((post) => (
-        <div key={post.id}>
-          <h3>{post.user_id}</h3>
+        <Box key={post.id} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
+          <Text mb="4">{post.user_id}</Text>
           {editPostId === post.id ? (
-            <EditPostFormCard
-              initialText={post.content}
-              postId={post.id}
-              onPostUpdate={handlePostUpdate}
-            />
+            <form onSubmit={handleUpdate}>
+              <Textarea
+                value={editContent}
+                onChange={e => setEditContent(e.target.value)}
+                marginBottom="4"
+              />
+              <Button colorScheme="blue" type="submit" mr="4">Update</Button>
+              <Button onClick={handleCancel}>Cancel</Button>
+            </form>
           ) : (
-            <p>{post.content}</p>
+            <>
+              <Text mb="4">{post.content}</Text>
+              <Button colorScheme="red" onClick={() => handleDelete(post.id)} mr="4">Delete</Button>
+              <Button colorScheme="yellow" onClick={() => handleEdit(post.id, post.content)}>Edit</Button>
+            </>
           )}
-          <button onClick={() => handleDelete(post.id)}>delete</button>
-          <button onClick={() => handleEdit(post.id)}>edit</button>
-        </div>
+        </Box>
       ))}
-    </div>
+    </Flex>
   );
 };
 
