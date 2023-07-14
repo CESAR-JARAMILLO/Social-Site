@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getPosts, deletePost, updatePost } from '@/pages/api/postsAuth/postsAuth';
-import { Box, Button, Flex, Text, Input, useBreakpointValue, Textarea } from '@chakra-ui/react';
-
-type Post = {
-  content: string;
-  user_id: string;
-  id: string;
-}
+import { Flex } from '@chakra-ui/react';
+import PostCardItem, { Post, PostCardItemProps } from './PostCardItem'; 
 
 const PostCard = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -20,7 +15,6 @@ const PostCard = () => {
         setPosts(data);
       } catch (error: any) {
         console.error('Error retrieving posts:', error.message);
-        // handle error here, you could set it to state and display in your UI
       }
     };
 
@@ -43,7 +37,7 @@ const PostCard = () => {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editPostId) return; // If editPostId is null, exit the function
+    if (!editPostId) return; 
   
     try {
       await updatePost(editPostId, editContent);
@@ -57,36 +51,21 @@ const PostCard = () => {
       console.error('Error updating post:', error.message);
     }
   };
-  
-
-  const handleCancel = () => {
-    setEditPostId(null);
-    setEditContent('');
-  };
 
   return (
-    <Flex direction="column" maxWidth="500px" margin="0 auto">
+    <Flex direction="column" alignItems="center">
       {posts.map((post) => (
-        <Box key={post.id} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
-          <Text mb="4">{post.user_id}</Text>
-          {editPostId === post.id ? (
-            <form onSubmit={handleUpdate}>
-              <Textarea
-                value={editContent}
-                onChange={e => setEditContent(e.target.value)}
-                marginBottom="4"
-              />
-              <Button colorScheme="blue" type="submit" mr="4">Update</Button>
-              <Button onClick={handleCancel}>Cancel</Button>
-            </form>
-          ) : (
-            <>
-              <Text mb="4">{post.content}</Text>
-              <Button colorScheme="red" onClick={() => handleDelete(post.id)} mr="4">Delete</Button>
-              <Button colorScheme="yellow" onClick={() => handleEdit(post.id, post.content)}>Edit</Button>
-            </>
-          )}
-        </Box>
+        <PostCardItem
+          key={post.id}
+          post={post}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+          editPostId={editPostId}
+          setEditPostId={setEditPostId}
+          editContent={editContent}
+          setEditContent={setEditContent}
+          handleUpdate={handleUpdate}
+        />
       ))}
     </Flex>
   );
