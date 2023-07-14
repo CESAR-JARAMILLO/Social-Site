@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPost } from '@/pages/api/postsAuth/postsAuth';
-import { Box, Button, Flex, Textarea, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Button, Flex, Textarea, useBreakpointValue, Avatar } from '@chakra-ui/react';
 
 const PostFormCard = () => {
   const [text, setText] = useState('');
@@ -19,23 +19,28 @@ const PostFormCard = () => {
     }
   };
   
-  const formWidth = useBreakpointValue({ base: "90%", md: "40%", lg: "30%" });
+  const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
   return (
     <Flex justifyContent="center">
-      <Box width={formWidth} padding="4" boxShadow="lg" borderRadius="md" bg="white" marginTop="4">
-        <form onSubmit={handleSubmit}>
-          <Flex direction="column" marginBottom="1em">
+      <Box width={formWidth} padding="4" boxShadow="lg" borderRadius="md" bg="white">
+        <Flex gap={2}>
+          <Avatar size="lg" src='/images/cesar.jpeg' />
+          <Box as='form' width="100%" onSubmit={handleSubmit}>
             <Textarea
+              p={3}
+              mb={4}
+              border="none"
               value={text}
               onChange={e => setText(e.target.value)}
-              placeholder="Write your post here..."
-              marginBottom="1em"
-              size="sm"
+              placeholder="What's on your mind?"
+              size="md"
             />
-            <Button type="submit" colorScheme="blue">Submit</Button>
-          </Flex>
-        </form>
+            <Flex justifyContent="flex-end">
+              <Button type="submit" colorScheme="blue">Submit</Button>
+            </Flex>
+          </Box>
+        </Flex>
       </Box>
     </Flex>
   );
