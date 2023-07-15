@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
 import { FiMoreHorizontal, FiTrash2, FiEdit } from "react-icons/fi";
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
+import CommentForm from '../comments/CommentForm';
 
 export type Post = {
   content: string;
@@ -27,7 +28,6 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
   const handleButtonHover = {
     backgroundColor: "blue.400",
     color: "white",
-    // p: "10px",
     borderRadius: "10px"
   }
 
@@ -78,20 +78,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
       ) : (
         <>
           <Text mb="4">{post.content}</Text>
-          <Flex gap={2}>
-            <Avatar size="md" src='/images/cesar.jpeg' />
-            <Box as='form' width="100%">
-              <Input
-                p={3}
-                mb={4}
-                color="gray.500"
-                border="none"
-                value="Leave a comment"
-                placeholder="What's on your mind?"
-                size="md"
-              />
-            </Box>
-          </Flex>
+          <CommentForm postId={post.id} /> {/* Passing postId prop to CommentForm */}
         </>
       )}
     </Box>
