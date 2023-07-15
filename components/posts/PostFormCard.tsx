@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPost } from '@/pages/api/postsAuth/postsAuth';
-import { Box, Button, Flex, Textarea, useBreakpointValue, Avatar } from '@chakra-ui/react';
+import { Box, Button, Flex, useBreakpointValue, Avatar, Input } from '@chakra-ui/react';
 
 const PostFormCard = () => {
   const [text, setText] = useState('');
@@ -27,9 +27,9 @@ const PostFormCard = () => {
         <Flex gap={2}>
           <Avatar size="lg" src='/images/cesar.jpeg' />
           <Box as='form' width="100%" onSubmit={handleSubmit}>
-            <Textarea
-              p={3}
-              mb={4}
+            <Input
+              as="textarea"
+              my={4}
               border="none"
               value={text}
               onChange={e => setText(e.target.value)}
