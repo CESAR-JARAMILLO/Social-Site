@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
-import { FiMoreHorizontal, FiTrash2, FiEdit } from "react-icons/fi";
+import { FiMoreHorizontal, FiTrash2, FiEdit, FiHeart, FiMessageSquare } from "react-icons/fi";
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import CommentForm from '../comments/CommentForm';
 
@@ -77,8 +77,22 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
         </form>
       ) : (
         <>
-          <Text mb="4">{post.content}</Text>
-          <CommentForm postId={post.id} /> {/* Passing postId prop to CommentForm */}
+          <Text>{post.content}</Text>
+          <Flex my={4} gap={10}>
+            <Flex gap={2}>
+              <Box as='button'>
+                <FiHeart size={20} />
+              </Box>
+              <Text>56</Text>           
+            </Flex>
+            <Flex gap={2}>
+              <Box as='button'>
+                <FiMessageSquare size={20} />
+              </Box>
+              <Text>6</Text>
+            </Flex>
+          </Flex>
+          <CommentForm postId={post.id} />
         </>
       )}
     </Box>
