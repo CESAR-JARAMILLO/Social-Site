@@ -17,3 +17,13 @@ export async function createLike(user_id: string, post_id: string) {
   
   return { data, error };
 }
+
+export async function removeLike(user_id: string, post_id: string) {
+  const { data, error } = await supabase
+    .from('likes')
+    .delete()
+    .eq('user_id', user_id)
+    .eq('post_id', post_id);
+
+  return { data, error };
+}
