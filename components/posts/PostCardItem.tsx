@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, useDisclosure } from '@chakra-ui/react';
 import { FiMoreHorizontal, FiTrash2, FiEdit, FiHeart, FiMessageSquare } from "react-icons/fi";
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import CommentForm from '../comments/CommentForm';
 import Comments from '../comments/Comments';
 import { getCommentsByPostId } from '@/pages/api/commentsAuth';
-import { getAllLikes, createLike } from '@/pages/api/likesAuth';
+import { getAllLikes, createLike, removeLike } from '@/pages/api/likesAuth';
 
 export type Post = {
   content: string;
@@ -30,10 +30,10 @@ export type PostCardItemProps = {
   handleUpdate: (e: React.FormEvent) => void;
 }
 
-const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDelete, editPostId, setEditPostId, editContent, setEditContent, handleUpdate}) => {
+const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDelete, editPostId, setEditPostId, editContent, setEditContent, handleUpdate }) => {
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
-  const [viewComments, setViewComments] = useState(false)
+  const [viewComments, setViewComments] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
@@ -54,32 +54,50 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
   const handleLikePost = async () => {
     const userId = post.user_id;
     const { error } = await createLike(userId, post.id);
-    if(error) {
+    if (error) {
       console.log('Failed to like post:', error);
     } else {
       setLikes(prevLikes => [...prevLikes, { id: 'tempId', user_id: userId, post_id: post.id }]);
     }
   }
 
+  const handleUnlikePost = async () => {
+    const userId = post.user_id;
+    const postId = post.id;
+    const userLike = likes.find(like => like.user_id === userId && like.post_id === postId);
+    if (!userLike) {
+      return;
+    }
+    const { error } = await removeLike(userLike.user_id, userLike.post_id);
+    if (error) {
+      console.log('Failed to unlike post:', error);
+    } else {
+      setLikes(prevLikes => prevLikes.filter(like => like.id !== userLike.id));
+    }
+  };
+  
+
   useEffect(() => {
     const fetchCommentsAndLikes = async () => {
       try {
         const response = await getCommentsByPostId(post.id);
-        if(response.error) throw response.error;
+        if (response.error) throw response.error;
         setComments(prevComments => response.data || prevComments);
-
+  
         const likesResponse = await getAllLikes();
-        if(likesResponse.error) throw likesResponse.error;
+        if (likesResponse.error) throw likesResponse.error;
         setLikes(prevLikes => likesResponse.data || prevLikes);
       } catch (error) {
         console.log((error as Error).message);
       }
     };
-
+  
     fetchCommentsAndLikes();
   }, [post.id]);
 
   const postLikes = likes.filter(like => like.post_id === post.id).length;
+
+  const isLiked = likes.some(like => like.user_id === post.user_id && like.post_id === post.id);
 
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
@@ -102,11 +120,11 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
             </PopoverTrigger>
             <PopoverContent mr={5}>
               <Flex direction="column" p="5" gap={2}>
-                <Flex as="button" onClick={() => {handleDelete(post.id); onClose();}} p={4} _hover={handleButtonHover}>
+                <Flex as="button" onClick={() => { handleDelete(post.id); onClose(); }} p={4} _hover={handleButtonHover}>
                   <FiTrash2 size={24} />
                   <Text>Delete Post</Text>
                 </Flex>
-                <Flex as="button" onClick={() => {handleEdit(post.id, post.content); onClose();}} p={4} _hover={handleButtonHover}>
+                <Flex as="button" onClick={() => { handleEdit(post.id, post.content); onClose(); }} p={4} _hover={handleButtonHover}>
                   <FiEdit size={24} />
                   <Text>Edit Post</Text>
                 </Flex>
@@ -130,10 +148,10 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
           <Text>{post.content}</Text>
           <Flex my={4} gap={10}>
             <Flex gap={2}>
-              <Box as='button' onClick={handleLikePost}>
-                <FiHeart size={20} />
+              <Box as='button' onClick={isLiked ? handleUnlikePost : handleLikePost}>
+                <FiHeart size={20} color={isLiked ? 'red' : 'gray'} />
               </Box>
-              <Text>{postLikes}</Text>           
+              <Text>{postLikes}</Text>
             </Flex>
             <Flex gap={2}>
               <Box onClick={handleCommentsView} as='button'>
