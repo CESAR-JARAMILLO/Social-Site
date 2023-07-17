@@ -23,3 +23,28 @@ export async function createComment(postId: string, comment: string) {
 
   return data;
 }
+
+export async function getCommentsByPostId(postId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('comments')
+      .select('*')
+      .eq('post_id', postId);
+
+    if (error) {
+      console.error('Error fetching comments:', error.message);
+      return { data: null, error };
+    }
+
+    if (!data) {
+      const noDataError = new Error('No data returned when fetching comments');
+      console.error(noDataError.message);
+      return { data: null, error: noDataError };
+    }
+
+    return { data, error: null };
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return { data: null, error };
+  }
+}
