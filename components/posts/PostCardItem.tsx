@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
 import { FiMoreHorizontal, FiTrash2, FiEdit, FiHeart, FiMessageSquare } from "react-icons/fi";
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import CommentForm from '../comments/CommentForm';
+import Comments from '../comments/Comments';
+import { getCommentsByPostId } from '@/pages/api/commentsAuth';
 
 export type Post = {
   content: string;
@@ -22,6 +24,8 @@ export type PostCardItemProps = {
 }
 
 const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDelete, editPostId, setEditPostId, editContent, setEditContent, handleUpdate}) => {
+  const [comments, setComments] = useState<Comment[] | null>(null);
+  const [viewComments, setViewComments] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
@@ -30,6 +34,28 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
     color: "white",
     borderRadius: "10px"
   }
+
+  const handleCommentsView = () => {
+    if (!viewComments) {
+      setViewComments(true)
+    } else {
+      setViewComments(false)
+    }
+  }
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await getCommentsByPostId(post.id);
+        if(response.error) throw response.error;
+        setComments(response.data);
+      } catch (error) {
+        console.log((error as Error).message);
+      }
+    };
+
+    fetchComments();
+  }, [post.id]);
 
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
@@ -86,12 +112,15 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
               <Text>56</Text>           
             </Flex>
             <Flex gap={2}>
-              <Box as='button'>
+              <Box onClick={handleCommentsView} as='button'>
                 <FiMessageSquare size={20} />
               </Box>
-              <Text>6</Text>
+              <Text>{comments?.length}</Text>
             </Flex>
           </Flex>
+          {viewComments && (
+            <Comments postId={post.id} />
+          )}
           <CommentForm postId={post.id} />
         </>
       )}
