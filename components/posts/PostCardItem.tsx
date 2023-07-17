@@ -216,8 +216,8 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
               <Text>{comments?.length}</Text>
             </Flex>
           </Flex>
-          {viewComments && <Comments postId={post.id} />}
-          <CommentForm postId={post.id} />
+          {viewComments && <Comments getTimeDifference={getTimeDifference } postId={post.id} />}
+          <CommentForm  postId={post.id} />
         </>
       )}
     </Box>
