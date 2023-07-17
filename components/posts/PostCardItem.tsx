@@ -5,12 +5,19 @@ import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import CommentForm from '../comments/CommentForm';
 import Comments from '../comments/Comments';
 import { getCommentsByPostId } from '@/pages/api/commentsAuth';
+import { getAllLikes } from '@/pages/api/likesAuth';
 
 export type Post = {
   content: string;
   user_id: string;
   id: string;
 }
+
+export type Like = {
+  id: string;
+  user_id: string;
+  post_id: string;
+};
 
 export type PostCardItemProps = {
   post: Post;
@@ -25,6 +32,7 @@ export type PostCardItemProps = {
 
 const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDelete, editPostId, setEditPostId, editContent, setEditContent, handleUpdate}) => {
   const [comments, setComments] = useState<Comment[] | null>(null);
+  const [likes, setLikes] = useState<Like[] | null>(null);
   const [viewComments, setViewComments] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
@@ -44,18 +52,24 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
   }
 
   useEffect(() => {
-    const fetchComments = async () => {
+    const fetchCommentsAndLikes = async () => {
       try {
         const response = await getCommentsByPostId(post.id);
         if(response.error) throw response.error;
         setComments(response.data);
+
+        const likesResponse = await getAllLikes();
+        if(likesResponse.error) throw likesResponse.error;
+        setLikes(likesResponse.data);
       } catch (error) {
         console.log((error as Error).message);
       }
     };
 
-    fetchComments();
+    fetchCommentsAndLikes();
   }, [post.id]);
+
+  const postLikes = likes?.filter(like => like.post_id === post.id).length || 0;
 
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
@@ -109,7 +123,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({post, handleEdit, handleDele
               <Box as='button'>
                 <FiHeart size={20} />
               </Box>
-              <Text>56</Text>           
+              <Text>{postLikes}</Text>           
             </Flex>
             <Flex gap={2}>
               <Box onClick={handleCommentsView} as='button'>
