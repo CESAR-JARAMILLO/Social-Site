@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import { getCommentsByPostId } from '@/pages/api/commentsAuth';
-import { Box, VStack, Text, Flex, Avatar, IconButton, Popover, PopoverTrigger, PopoverContent } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, VStack, Text, Flex, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
+import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import { FiEdit, FiMoreHorizontal, FiTrash2 } from 'react-icons/fi';
+import { getCommentsByPostId, updateComment } from '@/pages/api/commentsAuth';
 
 type Comment = {
+  id: string;
   user_id: string;
   comment: string;
 };
@@ -15,6 +17,10 @@ type CommentsProps = {
 const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [editableCommentId, setEditableCommentId] = useState<string | null>(null);
+  const [newCommentText, setNewCommentText] = useState<string>('');
+  const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -29,6 +35,26 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
 
     fetchComments();
   }, [postId]);
+
+  const handleEdit = async () => {
+    if (!editableCommentId) return;
+
+    try {
+      const response = await updateComment(editableCommentId, newCommentText);
+      if (response.error) throw response.error;
+      console.log('Comment updated successfully:', response.data);
+      setComments(prev => prev && prev.map(comment => comment.id === editableCommentId ? {...comment, comment: newCommentText} : comment));
+      setEditableCommentId(null);
+      setNewCommentText('');
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  }
+
+  const handleCancel = () => {
+    setEditableCommentId(null);
+    setNewCommentText('');
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -45,32 +71,40 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
           <Avatar size="md" src='/images/cesar.jpeg' />
           <Box bg="blackAlpha.100" w="70%" borderRadius={20} p={2}>
             <Text fontWeight="bold">Cesar Jaramillo</Text>
-            <Text>{comment.comment}</Text>
+            {editableCommentId === comment.id ? (
+              <>
+                <Input bg="transparent" as="textarea" value={newCommentText} onChange={e => setNewCommentText(e.target.value)} />
+                <Button onClick={handleEdit}>Save</Button>
+                <Button onClick={handleCancel}>Cancel</Button>
+              </>
+            ) : (
+              <Text>{comment.comment}</Text>
+            )}
           </Box>
           <Box alignSelf="center">
-          <Popover>
-            <PopoverTrigger>
-              <IconButton
-                aria-label="Options"
-                icon={<FiMoreHorizontal size={24} />}
-                color="gray.500"
-                variant="ghost"
-                // onClick={onOpen}
-              />
-            </PopoverTrigger>
-            <PopoverContent mr={5}>
-              <Flex direction="column" p="5" gap={2}>
-                <Flex as="button" p={4} >
-                  <FiTrash2 size={24} />
-                  <Text>Delete Comment</Text>
+            <Popover isOpen={isOpen && selectedCommentId === comment.id} onClose={() => {onClose(); setSelectedCommentId(null);}}>
+              <PopoverTrigger>
+                <IconButton
+                  aria-label="Options"
+                  icon={<FiMoreHorizontal size={24} />}
+                  color="gray.500"
+                  variant="ghost"
+                  onClick={() => {onOpen(); setSelectedCommentId(comment.id);}}
+                />
+              </PopoverTrigger>
+              <PopoverContent mr={5}>
+                <Flex direction="column" p="5" gap={2}>
+                  <Flex as="button" p={4} onClick={() => {onClose(); setSelectedCommentId(null);}}>
+                    <FiTrash2 size={24} />
+                    <Text>Delete Comment</Text>
+                  </Flex>
+                  <Flex as="button" p={4} onClick={() => { setEditableCommentId(comment.id); setNewCommentText(comment.comment); onClose(); setSelectedCommentId(null);}} >
+                    <FiEdit size={24} />
+                    <Text>Edit Comment</Text>
+                  </Flex>
                 </Flex>
-                <Flex as="button" p={4} >
-                  <FiEdit size={24} />
-                  <Text>Edit Comment</Text>
-                </Flex>
-              </Flex>
-            </PopoverContent>
-          </Popover>
+              </PopoverContent>
+            </Popover>
           </Box>
         </Flex>
       ))}
