@@ -22,7 +22,7 @@ const PostFormCard = () => {
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
   return (
-    <Flex justifyContent="center">
+    <Flex my={8} justifyContent="center">
       <Box width={formWidth} padding="4" boxShadow="lg" borderRadius="md" bg="white">
         <Flex gap={2}>
           <Avatar size="lg" src='/images/cesar.jpeg' />
