@@ -61,3 +61,14 @@ export async function updateComment(commentId: string, newText: string) {
 
   return { data, error };
 }
+
+export async function deleteComment(commentId: string) {
+  const { data, error } = await supabase
+    .from('comments')
+    .delete()
+    .eq('id', commentId);
+
+  console.log('Deleted comment:', commentId);
+
+  return { data, error };
+}
