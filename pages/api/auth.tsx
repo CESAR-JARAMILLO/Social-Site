@@ -135,3 +135,13 @@ export async function updateUser(email: string, fullName: string, username: stri
     throw error;
   }
 }
+
+export async function getUserById(user_id: string) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user_id)
+    .single();
+
+  return { data, error };
+}
