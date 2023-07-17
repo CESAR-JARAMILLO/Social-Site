@@ -6,6 +6,7 @@ import CommentForm from '../comments/CommentForm';
 import Comments from '../comments/Comments';
 import { getCommentsByPostId } from '@/pages/api/commentsAuth';
 import { getAllLikes, createLike, removeLike } from '@/pages/api/likesAuth';
+import { getUserById } from '@/pages/api/auth';
 
 export type Post = {
   content: string;
@@ -31,6 +32,7 @@ export type PostCardItemProps = {
 }
 
 const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDelete, editPostId, setEditPostId, editContent, setEditContent, handleUpdate }) => {
+  const [user, setUser] = useState<any>(null);
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [viewComments, setViewComments] = useState(false);
@@ -80,13 +82,20 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   useEffect(() => {
     const fetchCommentsAndLikes = async () => {
       try {
+        // Fetch comments
         const response = await getCommentsByPostId(post.id);
         if (response.error) throw response.error;
         setComments(prevComments => response.data || prevComments);
   
+        // Fetch likes
         const likesResponse = await getAllLikes();
         if (likesResponse.error) throw likesResponse.error;
         setLikes(prevLikes => likesResponse.data || prevLikes);
+  
+        // Fetch user
+        const userResponse = await getUserById(post.user_id);
+        if (userResponse.error) throw userResponse.error;
+        setUser(userResponse.data);
       } catch (error) {
         console.log((error as Error).message);
       }
@@ -94,6 +103,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   
     fetchCommentsAndLikes();
   }, [post.id]);
+  
 
   const postLikes = likes.filter(like => like.post_id === post.id).length;
 
@@ -104,7 +114,12 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
       <Flex mb={4} gap={4}>
         <Avatar size="lg" src='/images/cesar.jpeg' />
         <Flex direction="column">
-          <Text fontWeight="bold" fontSize="sm">Cesar</Text>
+        <Text fontSize="sm">
+        <Text as="span" fontWeight="bold">
+          {user?.full_name}
+          </Text>{" "}
+          shared a post
+        </Text>
           <Text color="gray.500" fontSize="xs">4 hours ago</Text>
         </Flex>
         <Flex flex="1" justifyContent="flex-end">
