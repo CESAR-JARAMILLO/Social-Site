@@ -3,6 +3,7 @@ import { Box, Button, VStack, Text, Flex, Avatar, IconButton, Input, useDisclosu
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import { FiEdit, FiMoreHorizontal, FiTrash2 } from 'react-icons/fi';
 import { deleteComment, getCommentsByPostId, updateComment } from '@/pages/api/commentsAuth';
+import { useUser } from '@supabase/auth-helpers-react';
 
 type Comment = {
   id: string;
@@ -21,6 +22,7 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [selectedCommentId, setSelectedCommentId] = useState<string | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const user = useUser()
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -98,35 +100,38 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
               <Text>{comment.comment}</Text>
             )}
           </Box>
-          <Box alignSelf="center">
-            <Popover isOpen={isOpen && selectedCommentId === comment.id} onClose={() => {onClose(); setSelectedCommentId(null);}}>
-              <PopoverTrigger>
-                <IconButton
-                  aria-label="Options"
-                  icon={<FiMoreHorizontal size={24} />}
-                  color="gray.500"
-                  variant="ghost"
-                  onClick={() => {onOpen(); setSelectedCommentId(comment.id);}}
-                />
-              </PopoverTrigger>
-              <PopoverContent mr={5}>
-                <Flex direction="column" p="5" gap={2}>
-                  <Flex as="button" p={4} onClick={() => {handleDelete(comment.id); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
-                    <FiTrash2 size={24} />
-                    <Text>Delete Comment</Text>
+          {comment.user_id === user?.id && (
+            <Box alignSelf="center">
+              <Popover isOpen={isOpen && selectedCommentId === comment.id} onClose={() => {onClose(); setSelectedCommentId(null);}}>
+                <PopoverTrigger>
+                  <IconButton
+                    aria-label="Options"
+                    icon={<FiMoreHorizontal size={24} />}
+                    color="gray.500"
+                    variant="ghost"
+                    onClick={() => {onOpen(); setSelectedCommentId(comment.id);}}
+                  />
+                </PopoverTrigger>
+                <PopoverContent mr={5}>
+                  <Flex direction="column" p="5" gap={2}>
+                    <Flex as="button" p={4} onClick={() => {handleDelete(comment.id); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
+                      <FiTrash2 size={24} />
+                      <Text>Delete Comment</Text>
+                    </Flex>
+                    <Flex as="button" p={4} onClick={() => { setEditableCommentId(comment.id); setNewCommentText(comment.comment); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
+                      <FiEdit size={24} />
+                      <Text>Edit Comment</Text>
+                    </Flex>
                   </Flex>
-                  <Flex as="button" p={4} onClick={() => { setEditableCommentId(comment.id); setNewCommentText(comment.comment); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
-                    <FiEdit size={24} />
-                    <Text>Edit Comment</Text>
-                  </Flex>
-                </Flex>
-              </PopoverContent>
-            </Popover>
-          </Box>
+                </PopoverContent>
+              </Popover>
+            </Box>
+          )}
         </Flex>
       ))}
     </VStack>
   );
+  
 }
 
 export default Comments;
