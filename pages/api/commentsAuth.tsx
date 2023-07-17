@@ -48,3 +48,16 @@ export async function getCommentsByPostId(postId: string) {
     return { data: null, error };
   }
 }
+
+export async function updateComment(commentId: string, newText: string) {
+  const { data, error } = await supabase
+    .from('comments')
+    .update({ comment: newText }) 
+    .eq('id', commentId);
+  
+  if (error) {
+    console.error('Error updating comment:', error.message);
+  }
+
+  return { data, error };
+}
