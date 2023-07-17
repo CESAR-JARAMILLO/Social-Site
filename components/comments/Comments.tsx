@@ -9,13 +9,15 @@ type Comment = {
   id: string;
   user_id: string;
   comment: string;
+  created_at: string;
 };
 
 type CommentsProps = {
   postId: string;
+  getTimeDifference: (date: Date) => string;
 };
 
-const Comments: React.FC<CommentsProps> = ({ postId }) => {
+const Comments: React.FC<CommentsProps> = ({ postId, getTimeDifference }) => {
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [editableCommentId, setEditableCommentId] = useState<string | null>(null);
@@ -88,18 +90,23 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
       {comments.map((comment, index) => (
         <Flex gap={4} key={index}>
           <Avatar size="md" src='/images/cesar.jpeg' />
-          <Box bg="blackAlpha.100" w="70%" borderRadius={20} p={2}>
-            <Text fontWeight="bold">Cesar Jaramillo</Text>
-            {editableCommentId === comment.id ? (
-              <>
-                <Input bg="transparent" as="textarea" value={newCommentText} onChange={e => setNewCommentText(e.target.value)} />
-                <Button onClick={handleEdit}>Save</Button>
-                <Button onClick={handleCancel}>Cancel</Button>
-              </>
-            ) : (
-              <Text>{comment.comment}</Text>
-            )}
-          </Box>
+          <Flex direction="column">
+            <Box bg="blackAlpha.100" borderRadius={20} p={2}>
+              <Text fontWeight="bold">Cesar Jaramillo</Text>
+              {editableCommentId === comment.id ? (
+                <>
+                  <Input bg="transparent" as="textarea" value={newCommentText} onChange={e => setNewCommentText(e.target.value)} />
+                  <Button onClick={handleEdit}>Save</Button>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                </>
+              ) : (
+                <Text>{comment.comment}</Text>
+              )}
+            </Box>
+            <Text ml={2} mt={1} color="gray.500" fontSize="xs">
+              {getTimeDifference(new Date(comment.created_at))}
+            </Text>
+          </Flex>
           {comment.user_id === user?.id && (
             <Box alignSelf="center">
               <Popover isOpen={isOpen && selectedCommentId === comment.id} onClose={() => {onClose(); setSelectedCommentId(null);}}>
