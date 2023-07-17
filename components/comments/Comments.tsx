@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, VStack, Text, Flex, Avatar, IconButton, Input, useDisclosure } from '@chakra-ui/react';
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import { FiEdit, FiMoreHorizontal, FiTrash2 } from 'react-icons/fi';
-import { getCommentsByPostId, updateComment } from '@/pages/api/commentsAuth';
+import { deleteComment, getCommentsByPostId, updateComment } from '@/pages/api/commentsAuth';
 
 type Comment = {
   id: string;
@@ -36,6 +36,12 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
     fetchComments();
   }, [postId]);
 
+  const handleButtonHover = {
+    backgroundColor: "blue.400",
+    color: "white",
+    borderRadius: "10px"
+  }
+
   const handleEdit = async () => {
     if (!editableCommentId) return;
 
@@ -54,6 +60,17 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
   const handleCancel = () => {
     setEditableCommentId(null);
     setNewCommentText('');
+  }
+
+  const handleDelete = async (commentId: string) => {
+    try {
+      await deleteComment(commentId);
+      setComments(prev => prev && prev.filter(comment => comment.id !== commentId));
+      onClose();
+      setSelectedCommentId(null);
+    } catch (error) {
+      setError((error as Error).message);
+    }
   }
 
   if (error) {
@@ -94,11 +111,11 @@ const Comments: React.FC<CommentsProps> = ({ postId }) => {
               </PopoverTrigger>
               <PopoverContent mr={5}>
                 <Flex direction="column" p="5" gap={2}>
-                  <Flex as="button" p={4} onClick={() => {onClose(); setSelectedCommentId(null);}}>
+                  <Flex as="button" p={4} onClick={() => {handleDelete(comment.id); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
                     <FiTrash2 size={24} />
                     <Text>Delete Comment</Text>
                   </Flex>
-                  <Flex as="button" p={4} onClick={() => { setEditableCommentId(comment.id); setNewCommentText(comment.comment); onClose(); setSelectedCommentId(null);}} >
+                  <Flex as="button" p={4} onClick={() => { setEditableCommentId(comment.id); setNewCommentText(comment.comment); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>
                     <FiEdit size={24} />
                     <Text>Edit Comment</Text>
                   </Flex>
