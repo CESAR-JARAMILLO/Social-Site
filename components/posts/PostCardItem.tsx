@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useBreakpointValue, Textarea, Avatar, IconButton, useDisclosure, Image } from '@chakra-ui/react';
 import { FiMoreHorizontal, FiTrash2, FiEdit, FiHeart, FiMessageSquare } from "react-icons/fi";
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/popover";
 import CommentForm from '../comments/CommentForm';
@@ -13,6 +13,7 @@ export type Post = {
   user_id: string;
   id: string;
   created_at: any;
+  photos: any;
 }
 
 export type Like = {
@@ -201,6 +202,9 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
         </form>
       ) : (
         <>
+          {post.photos?.length > 0 && post.photos.map((photo: any, index: number) => (
+            <Image key={index} src={photo} alt={`Photo ${index + 1}`} />
+          ))}
           <Text>{post.content}</Text>
           <Flex my={4} gap={10}>
             <Flex gap={2}>
