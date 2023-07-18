@@ -1,15 +1,26 @@
 import { useState, useRef } from 'react';
 import { createPost } from '@/pages/api/postsAuth/postsAuth';
-import { Box, Button, Flex, useBreakpointValue, Avatar, Input, Image, Spinner } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  useBreakpointValue,
+  Avatar,
+  Input,
+  Image,
+  Spinner,
+  AspectRatio,
+  Grid,
+} from '@chakra-ui/react';
 import { FiImage } from 'react-icons/fi';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
 const PostFormCard = () => {
   const [text, setText] = useState('');
   const [uploads, setUploads] = useState<string[]>([]);
-  const [isUploading, setIsUploading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const supabase = useSupabaseClient()
+  const supabase = useSupabaseClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +30,7 @@ const PostFormCard = () => {
       console.log('Post created successfully:', postData);
       alert(`You submitted: ${text}`);
       setText('');
-      setUploads([])
+      setUploads([]);
       if (fileInputRef.current) {
         fileInputRef.current.value = ''; // Reset the file input value
       }
@@ -35,35 +46,31 @@ const PostFormCard = () => {
     }
   };
 
-  const handleFileChange = async  (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files: FileList | null = e.target.files;
     if (files) {
-      setIsUploading(true)
+      setIsUploading(true);
       const fileList: File[] = Array.from(files);
       for (const file of fileList) {
-        const newName = Date.now() + file.name
-        const result = await supabase
-          .storage
-          .from('photos')
-          .upload(newName, file)
-          if (result.data) {
-            const url = process.env.NEXT_PUBLIC_SUPABASE_URL + '/storage/v1/object/public/photos/' + result.data.path
-            setUploads(prevUploads => [...prevUploads, url])
-          }
+        const newName = Date.now() + file.name;
+        const result = await supabase.storage.from('photos').upload(newName, file);
+        if (result.data) {
+          const url = process.env.NEXT_PUBLIC_SUPABASE_URL + '/storage/v1/object/public/photos/' + result.data.path;
+          setUploads(prevUploads => [...prevUploads, url]);
         }
-      setIsUploading(false)
+      }
+      setIsUploading(false);
     }
   };
-  
 
   const formWidth = useBreakpointValue({ base: '90%', sm: '70%', md: '50%', lg: '40%' });
 
   return (
     <Flex my={8} justifyContent="center">
       <Box width={formWidth} padding="4" boxShadow="lg" borderRadius="md" bg="white">
-        <Flex gap={2}>
-          <Avatar size="lg" src="/images/cesar.jpeg" />
-          <Box as="form" width="100%" onSubmit={handleSubmit}>
+        <Box as="form" width="100%" onSubmit={handleSubmit}>
+          <Flex gap={2}>
+            <Avatar size="lg" src="/images/cesar.jpeg" />
             <Input
               as="textarea"
               my={4}
@@ -73,35 +80,44 @@ const PostFormCard = () => {
               placeholder="What's on your mind?"
               size="md"
             />
-            {isUploading && (
-              <Spinner my={6} />
-            )}
-            {uploads.length > 0 && (
-              <>
-                {uploads.map(upload => (
-                  <Image borderRadius={10} h={20} key={upload} src={upload} alt="Uploaded Image" />
-                ))}
-              </>
-            )}
-            <Flex justifyContent="space-between">
-              <label htmlFor="file-input" style={{ cursor: 'pointer' }}>
-                <FiImage size={24} />
-              </label>
-              <input
-                id="file-input"
-                type="file"
-                accept="image/*"
-                multiple
-                style={{ display: 'none' }}
-                ref={fileInputRef}
-                onChange={handleFileChange}
-              />
-              <Button type="submit" colorScheme="blue">
-                Submit
-              </Button>
+          </Flex>
+          {isUploading && <Spinner my={6} />}
+          {uploads.length > 0 && (
+            <Flex gap={1} my={4} wrap="wrap">
+              {uploads.slice(0, 4).map((photo: any, index: number) => (
+                <Box w={['49%', '24%']}>
+                  <AspectRatio ratio={4 / 3}>
+                    <Image
+                      borderRadius={10}
+                      h="100%"
+                      w="100%"
+                      objectFit="contain"
+                      src={photo}
+                      alt={`Photo ${index + 1}`}
+                    />
+                  </AspectRatio>
+                </Box>
+              ))}
             </Flex>
-          </Box>
-        </Flex>
+          )}
+          <Flex mt={6} justifyContent="space-between">
+            <label htmlFor="file-input" style={{ cursor: 'pointer' }}>
+              <FiImage size={24} />
+            </label>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/*"
+              multiple
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+            <Button type="submit" colorScheme="blue">
+              Submit
+            </Button>
+          </Flex>
+        </Box>
       </Box>
     </Flex>
   );
