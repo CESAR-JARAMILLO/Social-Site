@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export async function createPost(content: string) {
+export async function createPost(content: string, photos: any) {
   const { data: user, error: userError } = await supabase.auth.getUser();
   
   if (userError) {
@@ -14,7 +14,7 @@ export async function createPost(content: string) {
   const { data, error: insertError } = await supabase
     .from('posts')
     .insert([
-      { content, user_id: user.user.id },
+      { content, user_id: user.user.id, photos: photos },
     ]);
 
   if (insertError) {
