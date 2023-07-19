@@ -100,7 +100,7 @@ const PostFormCard = () => {
               ))}
             </Flex>
           )}
-          <Flex mt={6} justifyContent="space-between">
+          <Flex mt={6} alignItems="center" justifyContent="space-between">
             <label htmlFor="file-input" style={{ cursor: 'pointer' }}>
               <FiImage size={24} />
             </label>
