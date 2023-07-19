@@ -6,7 +6,7 @@ import CommentForm from '../comments/CommentForm';
 import Comments from '../comments/Comments';
 import { getCommentsByPostId } from '@/pages/api/commentsAuth';
 import { getAllLikes, createLike, removeLike } from '@/pages/api/likesAuth';
-import { getUserById } from '@/pages/api/auth';
+import { getCurrentUserProfile, getUserById } from '@/pages/api/auth';
 import PostCardImages from './PostCardImages';
 import { useUser } from '@supabase/auth-helpers-react';
 
@@ -62,6 +62,8 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [viewComments, setViewComments] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [userName, setUserName] = useState('')
   const currentUser = useUser()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
@@ -139,6 +141,15 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
       }
     };
 
+    const fetchCurrentUser = async () => {
+      const userProfile = await getCurrentUserProfile();
+      if (userProfile) {
+        setAvatarUrl(userProfile[0].avatar_url)
+        setUserName(userProfile[0].username)
+      }
+    }
+
+    fetchCurrentUser()
     fetchCommentsAndLikes();
   }, [post.id]);
 
@@ -149,11 +160,11 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
       <Flex mb={4} gap={4}>
-        <Avatar size="lg" src='/images/cesar.jpeg' />
+        <Avatar size="lg" src={avatarUrl} />
         <Flex direction="column">
           <Text fontSize="sm">
             <Text as="span" fontWeight="bold">
-              {user?.full_name}
+              {userName}
             </Text>{" "}
             shared a post
           </Text>
