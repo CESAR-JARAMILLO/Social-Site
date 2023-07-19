@@ -81,28 +81,40 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   }
 
   const handleLikePost = async () => {
-    const userId = post.user_id;
-    const { error } = await createLike(userId, post.id);
-    if (error) {
-      console.log('Failed to like post:', error);
-    } else {
-      setLikes(prevLikes => [...prevLikes, { id: 'tempId', user_id: userId, post_id: post.id }]);
+    if (!currentUser) {
+        return console.error('User is not authenticated.');
     }
-  }
+
+    const { error } = await createLike(currentUser.id, post.id);
+
+    if (error) {
+        return console.error('Failed to like post:', error);
+    }
+
+    setLikes(prevLikes => [
+        ...prevLikes, 
+        { id: 'tempId', user_id: currentUser?.id, post_id: post.id }
+    ]);
+  };
 
   const handleUnlikePost = async () => {
-    const userId = post.user_id;
-    const postId = post.id;
-    const userLike = likes.find(like => like.user_id === userId && like.post_id === postId);
+    if (!currentUser) {
+        return console.error('User is not authenticated.');
+    }
+
+    const userLike = likes.find(like => like.user_id === currentUser?.id && like.post_id === post.id);
+
     if (!userLike) {
-      return;
+        return;
     }
-    const { error } = await removeLike(userLike.user_id, userLike.post_id);
+
+    const { error } = await removeLike(currentUser.id, post.id);
+
     if (error) {
-      console.log('Failed to unlike post:', error);
-    } else {
-      setLikes(prevLikes => prevLikes.filter(like => like.id !== userLike.id));
+        return console.error('Failed to unlike post:', error);
     }
+
+    setLikes(prevLikes => prevLikes.filter(like => like.id !== userLike.id));
   };
 
   useEffect(() => {
@@ -132,7 +144,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
 
   const postLikes = likes.filter(like => like.post_id === post.id).length;
 
-  const isLiked = likes.some(like => like.user_id === post.user_id && like.post_id === post.id);
+  const isLiked = likes.some(like => like.user_id === currentUser?.id && like.post_id === post.id);
 
   return (
     <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
