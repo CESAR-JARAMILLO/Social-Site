@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { createPost } from '@/pages/api/postsAuth/postsAuth';
+import { getCurrentUserProfile } from '@/pages/api/auth';
 import {
   Box,
   Button,
@@ -9,8 +10,7 @@ import {
   Input,
   Image,
   Spinner,
-  AspectRatio,
-  Grid,
+  AspectRatio
 } from '@chakra-ui/react';
 import { FiImage } from 'react-icons/fi';
 import { useSupabaseClient } from '@supabase/auth-helpers-react';
@@ -21,6 +21,7 @@ const PostFormCard = () => {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = useSupabaseClient();
+  const [avatarUrl, setAvatarUrl] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +64,18 @@ const PostFormCard = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const userProfile = await getCurrentUserProfile();
+      if (userProfile) {
+        setAvatarUrl(userProfile[0].avatar_url)
+      }
+    }
+  
+    fetchCurrentUser()
+  }, [])
+  
+
   const formWidth = useBreakpointValue({ base: '90%', sm: '70%', md: '50%', lg: '40%' });
 
   return (
@@ -70,7 +83,7 @@ const PostFormCard = () => {
       <Box width={formWidth} padding="4" boxShadow="lg" borderRadius="md" bg="white">
         <Box as="form" width="100%" onSubmit={handleSubmit}>
           <Flex gap={2}>
-            <Avatar size="lg" src="/images/cesar.jpeg" />
+            <Avatar size="lg" src={avatarUrl} />
             <Input
               as="textarea"
               my={4}
