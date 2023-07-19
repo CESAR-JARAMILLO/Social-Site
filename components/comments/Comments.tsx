@@ -110,15 +110,17 @@ const Comments: React.FC<CommentsProps> = ({ postId, getTimeDifference }) => {
           {comment.user_id === user?.id && (
             <Box alignSelf="center">
               <Popover isOpen={isOpen && selectedCommentId === comment.id} onClose={() => {onClose(); setSelectedCommentId(null);}}>
-                <PopoverTrigger>
-                  <IconButton
-                    aria-label="Options"
-                    icon={<FiMoreHorizontal size={24} />}
-                    color="gray.500"
-                    variant="ghost"
-                    onClick={() => {onOpen(); setSelectedCommentId(comment.id);}}
-                  />
-                </PopoverTrigger>
+                {user.id === comment.user_id && (
+                  <PopoverTrigger>
+                    <IconButton
+                      aria-label="Options"
+                      icon={<FiMoreHorizontal size={24} />}
+                      color="gray.500"
+                      variant="ghost"
+                      onClick={() => {onOpen(); setSelectedCommentId(comment.id);}}
+                    />
+                  </PopoverTrigger>
+                )}
                 <PopoverContent mr={5}>
                   <Flex direction="column" p="5" gap={2}>
                     <Flex as="button" p={4} onClick={() => {handleDelete(comment.id); onClose(); setSelectedCommentId(null);}} _hover={handleButtonHover}>

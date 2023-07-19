@@ -8,6 +8,7 @@ import { getCommentsByPostId } from '@/pages/api/commentsAuth';
 import { getAllLikes, createLike, removeLike } from '@/pages/api/likesAuth';
 import { getUserById } from '@/pages/api/auth';
 import PostCardImages from './PostCardImages';
+import { useUser } from '@supabase/auth-helpers-react';
 
 export type Post = {
   content: string;
@@ -61,6 +62,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   const [comments, setComments] = useState<Comment[] | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [viewComments, setViewComments] = useState(false);
+  const currentUser = useUser()
   const { isOpen, onOpen, onClose } = useDisclosure();
   const formWidth = useBreakpointValue({ base: "90%", sm: "70%", md: "50%", lg: "40%" });
 
@@ -149,15 +151,17 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
         </Flex>
         <Flex flex="1" justifyContent="flex-end">
           <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
-            <PopoverTrigger>
-              <IconButton
-                aria-label="Options"
-                icon={<FiMoreHorizontal size={24} />}
-                color="gray.500"
-                variant="ghost"
-                onClick={onOpen}
-              />
-            </PopoverTrigger>
+            {currentUser?.id === post.user_id && (
+              <PopoverTrigger>
+                <IconButton
+                  aria-label="Options"
+                  icon={<FiMoreHorizontal size={24} />}
+                  color="gray.500"
+                  variant="ghost"
+                  onClick={onOpen}
+                />
+              </PopoverTrigger>
+            )}
             <PopoverContent mr={5}>
               <Flex direction="column" p="5" gap={2}>
                 <Flex
