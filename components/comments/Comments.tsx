@@ -10,7 +10,12 @@ type Comment = {
   user_id: string;
   comment: string;
   created_at: string;
+  profiles: {
+    full_name: string;
+    avatar_url: string;
+  };
 };
+
 
 type CommentsProps = {
   postId: string;
@@ -89,10 +94,10 @@ const Comments: React.FC<CommentsProps> = ({ postId, getTimeDifference }) => {
     <VStack align="start" my={6} spacing={6}>
       {comments.map((comment, index) => (
         <Flex gap={4} key={index}>
-          <Avatar size="md" src='/images/cesar.jpeg' />
+          <Avatar size="md" src={comment.profiles.avatar_url} />
           <Flex direction="column">
             <Box bg="blackAlpha.100" borderRadius={20} p={2}>
-              <Text fontWeight="bold">Cesar Jaramillo</Text>
+            <Text fontWeight="bold">{comment.profiles.full_name}</Text>
               {editableCommentId === comment.id ? (
                 <>
                   <Input bg="transparent" as="textarea" value={newCommentText} onChange={e => setNewCommentText(e.target.value)} />
