@@ -25,29 +25,19 @@ export async function createComment(postId: string, comment: string) {
 }
 
 export async function getCommentsByPostId(postId: string) {
-  try {
-    const { data, error } = await supabase
-      .from('comments')
-      .select('*')
-      .eq('post_id', postId);
+  const { data, error } = await supabase
+    .from('comments')
+    .select(`
+      *,
+      profiles: user_id (full_name, avatar_url)
+    `)
+    .eq('post_id', postId)
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching comments:', error.message);
-      return { data: null, error };
-    }
-
-    if (!data) {
-      const noDataError = new Error('No data returned when fetching comments');
-      console.error(noDataError.message);
-      return { data: null, error: noDataError };
-    }
-
-    return { data, error: null };
-  } catch (error) {
-    console.error('Error fetching comments:', error);
-    return { data: null, error };
-  }
+  if (error) return { error };
+  return { data };
 }
+
 
 export async function updateComment(commentId: string, newText: string) {
   const { data, error } = await supabase
