@@ -1,6 +1,7 @@
 import { Avatar, Box, Flex, Input } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createComment } from '@/pages/api/commentsAuth';
+import { getCurrentUserProfile } from '@/pages/api/auth';
 
 type CommentFormProps = {
   postId: string;
@@ -8,6 +9,7 @@ type CommentFormProps = {
 
 const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
   const [comment, setComment] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('')
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setComment(e.target.value);
@@ -32,10 +34,21 @@ const CommentForm: React.FC<CommentFormProps> = ({ postId }) => {
     }
   }
 
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const userProfile = await getCurrentUserProfile();
+      if (userProfile) {
+        setAvatarUrl(userProfile[0].avatar_url)
+      }
+    }
+  
+    fetchCurrentUser()
+  }, [])
+
   return (
     <form onSubmit={handleSubmit}>
       <Flex gap={2}>
-        <Avatar size="md" src='/images/cesar.jpeg' />
+        <Avatar size="md" src={avatarUrl} />
         <Input
           as='textarea'
           onChange={handleCommentChange}
