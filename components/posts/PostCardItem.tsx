@@ -147,7 +147,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
   const isLiked = likes.some(like => like.user_id === currentUser?.id && like.post_id === post.id);
 
   return (
-    <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4">
+    <Box width={formWidth} borderWidth="1px" borderRadius="lg" overflow="hidden" padding="5" marginBottom="4" bg="white">
       <Flex mb={4} gap={4}>
       {user && (
         <>
