@@ -3,7 +3,8 @@ import { getCurrentUserProfile, updateUser, signOut } from './api/auth';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { deleteUser } from './api/adminAuth';
 import { useRouter } from 'next/router';
-import AccountHeader from '@/components/account/AccountHeader';
+import AccountHeader from '../components/account/accountHeader';
+import AccountPostCard from '@/components/account/AccountPostCard';
 
 const Account = () => {
   const [email, setEmail] = useState('');
@@ -79,6 +80,7 @@ const Account = () => {
   return (
     <div>
       <AccountHeader />
+      <AccountPostCard />
       <h1>Account</h1>
       <form onSubmit={handleSubmit}>
         <label>
