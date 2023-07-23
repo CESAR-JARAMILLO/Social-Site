@@ -140,7 +140,8 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
     };
   
     fetchCommentsAndLikes();
-  }, [post.id]);
+  }, [post.id, post.user_id]);
+
 
   const postLikes = likes.filter(like => like.post_id === post.id).length;
 

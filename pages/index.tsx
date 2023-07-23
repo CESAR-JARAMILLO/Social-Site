@@ -2,7 +2,7 @@ import PostCard from '@/components/posts/PostCard';
 import PostFormCard from '@/components/posts/PostFormCard';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { signOut } from './api/auth';
 
 const Home = () => {
@@ -16,9 +16,9 @@ const Home = () => {
 
   useEffect(() => {
     if (!isLoading && !session) {
-      useRouter().push('/login')
+      router.push('/login')
     }
-  }, [isLoading, session]);
+  }, [isLoading, session, router]);
   
 
   if (isLoading) {
@@ -34,4 +34,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home;

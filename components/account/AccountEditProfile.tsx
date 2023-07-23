@@ -27,12 +27,12 @@ const AccountEditProfile = () => {
         setUsername(userProfile[0].username);
         setAvatarUrl(userProfile[0].avatar_url);
       } else {
-        useRouter().push('/login');
+        router.push('/login');
       }
     };
   
     fetchAndSetUserData();
-  }, [session, user]);
+  }, [session, user, router]);
   
 
   if (isLoading) {
