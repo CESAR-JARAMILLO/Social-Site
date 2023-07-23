@@ -34,6 +34,19 @@ export async function getPosts() {
   return data;
 }
 
+export async function getUserPosts(user_id: string) {
+  const { data, error } = await supabase
+    .from('posts')
+    .select()
+    .eq('user_id', user_id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
+
 export async function deletePost(postId: string) {  
   const { error } = await supabase
     .from('posts')
