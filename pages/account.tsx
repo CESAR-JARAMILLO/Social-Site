@@ -6,12 +6,14 @@ import { useRouter } from 'next/router';
 import AccountHeader from '../components/account/AccountHeader';
 import AccountPostCard from '@/components/account/AccountPostCard';
 import AccountImagesCard from '@/components/account/AccountImagesCard';
+import AccountEditProfile from '@/components/account/AccountEditProfile';
 
 const Account = () => {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
+  const [activeComponent, setActiveComponent] = useState('posts');
   const router = useRouter()
   const { isLoading, session, error } = useSessionContext();
   const user = session?.user
@@ -80,9 +82,10 @@ const Account = () => {
 
   return (
     <div>
-      <AccountHeader />
-      <AccountPostCard />
-      <AccountImagesCard />
+      <AccountHeader setActiveComponent={setActiveComponent} />
+      {activeComponent === 'posts' && <AccountPostCard />}
+      {activeComponent === 'images' && <AccountImagesCard />}
+      {activeComponent === 'edit' && <AccountEditProfile />}
       <h1>Account</h1>
       <form onSubmit={handleSubmit}>
         <label>

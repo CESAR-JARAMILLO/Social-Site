@@ -2,7 +2,11 @@ import React from 'react'
 import { Box, Avatar, Flex, useMediaQuery, Text, Stack, Link, Icon } from "@chakra-ui/react"
 import { FiCamera } from 'react-icons/fi'
 
-const AccountHeader = () => {
+interface AccountHeaderProps {
+  setActiveComponent: (componentName: string) => void;
+}
+
+const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent }) => {
 
   const [isLargerThanMD] = useMediaQuery("(min-width: 768px)");
 
@@ -29,9 +33,9 @@ const AccountHeader = () => {
         </Text>
       </Flex>
       <Stack mt={20} ml={isLargerThanMD ? "none" : 6} direction="row" justify={isLargerThanMD ? "center" : "flex-start"} spacing={4} mb="4">
-        <Link href="#">Posts</Link>
-        <Link href="#">Photos</Link>
-        <Link href="#">Edit Profile</Link>
+        <Link onClick={() => setActiveComponent('posts')}>Posts</Link>
+        <Link onClick={() => setActiveComponent('images')}>Photos</Link>
+        <Link onClick={() => setActiveComponent('edit')}>Edit Profile</Link>
       </Stack>
     </Flex>
   )
