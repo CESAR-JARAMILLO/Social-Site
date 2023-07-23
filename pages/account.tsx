@@ -3,7 +3,7 @@ import { getCurrentUserProfile, updateUser, signOut } from './api/auth';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { deleteUser } from './api/adminAuth';
 import { useRouter } from 'next/router';
-import AccountHeader from '../components/account/accountHeader';
+import AccountHeader from '../components/account/AccountHeader';
 import AccountPostCard from '@/components/account/AccountPostCard';
 import AccountImagesCard from '@/components/account/AccountImagesCard';
 
