@@ -61,7 +61,7 @@ const PostCard = () => {
 
 
   return (
-    <Flex mt={6} direction="column" alignItems="center">
+    <Flex direction="column" alignItems="center">
       {posts.map((post) => (
         <PostCardItem
           key={post.id}
