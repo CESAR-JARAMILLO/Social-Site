@@ -98,7 +98,7 @@ const PostFormCard = () => {
           {uploads.length > 0 && (
             <Flex gap={1} my={4} wrap="wrap">
               {uploads.slice(0, 4).map((photo: any, index: number) => (
-                <Box w={['49%', '24%']}>
+                <Box w={['49%', '24%']} key={index}>
                   <AspectRatio ratio={4 / 3}>
                     <Image
                       borderRadius={10}

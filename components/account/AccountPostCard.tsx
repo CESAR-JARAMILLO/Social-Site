@@ -23,7 +23,7 @@ const PostCard = () => {
     };
   
     fetchData();
-  }, [user?.id]);
+  }, [user]);
   
 
   const handleDelete = async (postId: string) => {

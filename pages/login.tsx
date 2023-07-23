@@ -59,7 +59,7 @@ const Login = () => {
             <Button type="submit" colorScheme="blue">Sign in</Button>
           </Flex>
         </form>
-        <Link href="/signup" color="blue.500">Don't have an account?</Link>
+        <Link href="/signup" color="blue.500">Don{"'"}t have an account?</Link>
       </Box>
     </Flex>
   );

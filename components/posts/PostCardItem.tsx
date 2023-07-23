@@ -124,12 +124,12 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
         const response = await getCommentsByPostId(post.id);
         if (response.error) throw response.error;
         setComments(prevComments => response.data || prevComments);
-
+  
         // Fetch likes
         const likesResponse = await getAllLikes();
         if (likesResponse.error) throw likesResponse.error;
         setLikes(prevLikes => likesResponse.data || prevLikes);
-
+  
         // Fetch user
         const userResponse = await getUserById(post.user_id);
         if (userResponse.error) throw userResponse.error;
@@ -138,7 +138,7 @@ const PostCardItem: React.FC<PostCardItemProps> = ({ post, handleEdit, handleDel
         console.log((error as Error).message);
       }
     };
-
+  
     fetchCommentsAndLikes();
   }, [post.id]);
 

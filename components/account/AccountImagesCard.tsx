@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserPhotos } from '@/pages/api/photosAuth';
 import { useUser } from '@supabase/auth-helpers-react';
+import { Image } from '@chakra-ui/react';
 
 const AccountImagesCard = () => {
   const [photos, setPhotos] = useState<string[]>([]);
@@ -24,7 +25,9 @@ const AccountImagesCard = () => {
   return (
     <div>
       {photos.map((url, index) => (
-        <img key={index} src={url} alt="User uploaded" />
+        <div key={index} style={{ position: 'relative', width: '100%', height: 'auto' }}>
+          <Image src={url} alt="User uploaded" objectFit='cover' /> 
+        </div>
       ))}
     </div>
   );

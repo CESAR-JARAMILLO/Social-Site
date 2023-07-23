@@ -15,12 +15,11 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!session) {
-        router.push('/login')
-      }
+    if (!isLoading && !session) {
+      useRouter().push('/login')
     }
   }, [isLoading, session]);
+  
 
   if (isLoading) {
     return <div>Loading...</div>

@@ -17,23 +17,23 @@ const AccountEditProfile = () => {
   useEffect(() => {
     const fetchAndSetUserData = async () => {
       const userProfile = await getCurrentUserProfile();
-
+  
       if (user && user.email) {
         setEmail(user.email);
       }
-
+  
       if (userProfile && userProfile[0]) {
         setFullName(userProfile[0].full_name);
         setUsername(userProfile[0].username);
         setAvatarUrl(userProfile[0].avatar_url);
       } else {
-        router.push('/login');
+        useRouter().push('/login');
       }
-
     };
-
+  
     fetchAndSetUserData();
-  }, [session]);
+  }, [session, user]);
+  
 
   if (isLoading) {
     return (
