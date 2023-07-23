@@ -5,6 +5,7 @@ import { deleteUser } from './api/adminAuth';
 import { useRouter } from 'next/router';
 import AccountHeader from '../components/account/accountHeader';
 import AccountPostCard from '@/components/account/AccountPostCard';
+import AccountImagesCard from '@/components/account/AccountImagesCard';
 
 const Account = () => {
   const [email, setEmail] = useState('');
@@ -81,6 +82,7 @@ const Account = () => {
     <div>
       <AccountHeader />
       <AccountPostCard />
+      <AccountImagesCard />
       <h1>Account</h1>
       <form onSubmit={handleSubmit}>
         <label>
