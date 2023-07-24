@@ -25,7 +25,10 @@ export async function createPost(content: string, photos: any) {
 }
 
 export async function getPosts() {
-  const { data, error } = await supabase.from('posts').select();
+  const { data, error } = await supabase
+    .from('posts')
+    .select()
+    .order('created_at', { ascending: false });
 
   if (error) {
     throw new Error(error.message);
