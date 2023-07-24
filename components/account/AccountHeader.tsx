@@ -13,7 +13,9 @@ const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent }) => 
   return (
     <Flex mb={8} direction="column" justifyContent="space-between" bg="white" w={isLargerThanMD ? "80%" : "100%"} m={isLargerThanMD ? "40px auto" : "none"} borderRadius={isLargerThanMD ? "lg" : "none"} overflow="hidden">
       <Box h="200px" bgImage="url('https://source.unsplash.com/random')" bgSize="cover" position="relative">
-        <Icon as={FiCamera} p={1} w={8} h={8} position="absolute" bottom={4} right={6} color="white" bg="black" borderRadius={10}/>
+        <Box bg="gray.300" p={2} borderRadius={20} border="1px solid white" position="absolute" bottom={4} right={6}>
+          <FiCamera size={22} color="white" fill="black" />
+        </Box>
       </Box>
       <Flex direction="column" align={isLargerThanMD ? "center" : "flex-start"} ml={isLargerThanMD ? "none" : 6}>
         <Box position="relative">
@@ -26,7 +28,9 @@ const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent }) => 
             border="2px solid white"
             bg="white"
           />
-          <Icon as={FiCamera} p={1} w={7} h={7} position="absolute" bottom="14" right="-1" color="white" bg="black" borderRadius={10}/>
+          <Box bg="gray.300" p={2} borderRadius={20} border="1px solid white" position="absolute" bottom={14} right={-1}>
+          <FiCamera size={20} color="white" fill="black" />
+        </Box>
         </Box>
         <Text mt="-25px" fontSize="xl" fontWeight="bold">
           Cesar Jaramillo
