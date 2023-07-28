@@ -2,19 +2,62 @@ import AccountHeader from '../components/account/AccountHeader';
 import AccountPostCard from '@/components/account/AccountPostCard';
 import AccountImagesCard from '@/components/account/AccountImagesCard';
 import AccountEditProfile from '@/components/account/AccountEditProfile';
-import { useState } from 'react';
+import CompleteSignupForm from '@/components/signup/CompleteSignupForm';
+import { useState, useEffect } from 'react';
+import { useSessionContext } from '@supabase/auth-helpers-react';
+import { useRouter } from 'next/router';
+import { getCurrentUserProfile } from './api/auth';
+import { Flex } from '@chakra-ui/react';
 
 const Account = () => {
   const [activeComponent, setActiveComponent] = useState('posts');
+  const [completedSignup, setCompletedSignup] = useState(null)
+  const { isLoading, session } = useSessionContext();
+  const [userId, setUserId] = useState('')
+  const router = useRouter()
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!isLoading && !session) {
+        router.push('/login');
+      } else {
+        try {
+          const currentUserProfile = await getCurrentUserProfile();
+          if (currentUserProfile) {
+            setCompletedSignup(currentUserProfile[0]?.completed_signup);
+            setUserId(currentUserProfile[0]?.id)
+          } else {
+            console.error("User profile is undefined.");
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      }
+    };
+    
+    fetchUserProfile();
+  }, [isLoading, session, router]);  
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <>
-      <AccountHeader setActiveComponent={setActiveComponent} />
-      {activeComponent === 'posts' && <AccountPostCard />}
-      {activeComponent === 'images' && <AccountImagesCard />}
-      {activeComponent === 'edit' && <AccountEditProfile />}
+      {completedSignup ? (
+        <>
+          <AccountHeader setActiveComponent={setActiveComponent} />
+          {activeComponent === 'posts' && <AccountPostCard />}
+          {activeComponent === 'images' && <AccountImagesCard />}
+          {activeComponent === 'edit' && <AccountEditProfile />}
+        </>
+      ) : (
+        <Flex minHeight="100vh" alignItems="center" justifyContent="center">
+          <CompleteSignupForm userId={userId} />
+        </Flex>
+      )}
     </>
   )
 }
 
-export default Account
+export default Account;
