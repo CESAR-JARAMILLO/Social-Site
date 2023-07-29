@@ -1,7 +1,7 @@
 import PostCard from '@/components/posts/PostCard';
 import PostFormCard from '@/components/posts/PostFormCard';
 import CompleteSignupForm from '@/components/signup/CompleteSignupForm';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useSessionContext, useUser } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react'
@@ -54,9 +54,11 @@ const Home = () => {
           <button onClick={handleLogout}>Logout</button>
         </>
       ) : (
-        <Flex minHeight="100vh" alignItems="center" justifyContent="center">
+        <Box minHeight="100vh" mt={10}>
+          <Flex mt="6em" alignItems="center" justifyContent="center">
           <CompleteSignupForm userId={userId} />
         </Flex>
+        </Box>
       )}
     </>
   )
