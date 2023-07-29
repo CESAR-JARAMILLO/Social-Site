@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { signUp } from '@/pages/api/auth';
-import { Box, Button, Flex, Input, Link, useBreakpointValue, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link, useBreakpointValue, Heading, Alert, AlertIcon } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
 const SignupForm = () => {
@@ -8,6 +8,8 @@ const SignupForm = () => {
   const [confirmEmail, setConfirmEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | boolean>(false);
   const router = useRouter()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,29 +30,48 @@ const SignupForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if(email !== confirmEmail) {
-      console.log('Emails do not match!');
+      setErrorMessage('Emails do not match!');
       return;
     }
-
+  
     if(password !== confirmPassword) {
-      console.log('Passwords do not match!');
+      setErrorMessage('Passwords do not match!');
       return;
     }
-
-    signUp(email, password)
-
+  
+    const { error } = await signUp(email, password)
+  
+    if (error) {
+      setErrorMessage(`Failed to sign up: ${error}`);
+      return;
+    }
+  
+    setErrorMessage(null)
+    setSuccessMessage('Signup successful! Please check your email and follow the link.');
     setEmail('');
     setPassword('');
     setConfirmEmail('');
     setConfirmPassword('');
-  };
+  };  
 
   const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   return (
     <Box width={formWidth}>
+      {errorMessage && (
+          <Alert borderRadius={20} mb={5} status='error'>
+            <AlertIcon />
+            {errorMessage}
+          </Alert>
+        )}
+        {successMessage && (
+          <Alert borderRadius={20} mb={5} status='success'>
+            <AlertIcon />
+            {successMessage}
+          </Alert>
+        )}
           <Heading textAlign="center" marginBottom="2em">Signup</Heading>
           <form onSubmit={handleSubmit}>
             <Flex direction="column" marginBottom="1em">
