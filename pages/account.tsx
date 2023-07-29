@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { useRouter } from 'next/router';
 import { getCurrentUserProfile } from './api/auth';
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 
 const Account = () => {
   const [activeComponent, setActiveComponent] = useState('posts');
@@ -52,9 +52,11 @@ const Account = () => {
           {activeComponent === 'edit' && <AccountEditProfile />}
         </>
       ) : (
-        <Flex minHeight="100vh" alignItems="center" justifyContent="center">
-          <CompleteSignupForm userId={userId} />
-        </Flex>
+        <Box minHeight="100vh" mt={10}>
+          <Flex mt="6em" alignItems="center" justifyContent="center">
+            <CompleteSignupForm userId={userId} />
+          </Flex>
+        </Box>
       )}
     </>
   )
