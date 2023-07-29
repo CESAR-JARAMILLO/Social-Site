@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
 
-export async function signUp(email: string, password: string): Promise<void> {
+export async function signUp(email: string, password: string) {
   try {
     const { data, error } =
       await supabase.auth.signUp({
@@ -10,11 +10,14 @@ export async function signUp(email: string, password: string): Promise<void> {
 
     if (error) {
       console.log("Error creating user:", error.message);
+      return { error: error.message };
     } else {
       console.log("User created successfully:", data);
+      return { data };
     }
-  } catch (error) {
-    console.error("Error creating user:", error);
+  } catch (error: any) {
+    console.error("Error creating user:", error.message);
+    return { error: error.message };
   }
 }
 
