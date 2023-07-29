@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Flex, Input, Link, useBreakpointValue, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Link, useBreakpointValue, Heading, Alert, AlertIcon } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { supabase } from "@/lib/supabaseClient";
 
@@ -7,6 +7,9 @@ const CompleteSignupForm = ({ userId }: { userId: string }) => {
   const [username, setUsername] = useState('')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | boolean>(false);
+
   const router = useRouter()
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +26,7 @@ const CompleteSignupForm = ({ userId }: { userId: string }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     // Update user profile in the database
     const { error } = await supabase
       .from('profiles')
@@ -35,22 +38,36 @@ const CompleteSignupForm = ({ userId }: { userId: string }) => {
         full_name: `${firstName} ${lastName}`,
         completed_signup: true
       })
-
+  
     if (error) {
-      console.log("Error updating profile:", error);
+      setErrorMessage(`Failed to update profile: ${error.message}`);
       return;
     }
-
+  
+    setErrorMessage(null)
+    setSuccessMessage('Profile updated successfully!');
     setUsername('');
     setFirstName('');
     setLastName('');
     router.push('/')
-  };
+  };  
 
   const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   return (
     <Box width={formWidth}>
+      {errorMessage && (
+        <Alert borderRadius={20} mb={5} status='error'>
+          <AlertIcon />
+          {errorMessage}
+        </Alert>
+      )}
+      {successMessage && (
+        <Alert borderRadius={20} mb={5} status='success'>
+          <AlertIcon />
+          {successMessage}
+        </Alert>
+      )}
       <Heading textAlign="center" marginBottom="2em">Complete Your Profile</Heading>
       <form onSubmit={handleSubmit}>
         <Flex direction="column" marginBottom="1em">
