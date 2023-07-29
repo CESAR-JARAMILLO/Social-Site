@@ -28,14 +28,14 @@ export async function signIn(email: string, password: string) {
 
     if (error) {
       console.log("Error signing in:", error.message);
-      return { error };
+      return { error: error.message };
     } else {
       console.log("Signed in successfully:", data);
       return { data };
     }
-  } catch (error) {
-    console.error("Error signing in:", error);
-    return { error };
+  } catch (error: any) { // Handle any unknown type of error
+    console.error("Error signing in:", error.message);
+    return { error: error.message };
   }
 }
 
