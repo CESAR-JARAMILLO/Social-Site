@@ -3,12 +3,14 @@ import { getCurrentUserProfile, updateUser, signOut } from '@/pages/api/auth';
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { deleteUser } from '@/pages/api/adminAuth';
 import { useRouter } from 'next/router';
-import { Button, FormControl, FormLabel, Input, VStack, Box } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Heading, Alert, AlertIcon, useBreakpointValue } from '@chakra-ui/react';
 
 const AccountEditProfile = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | boolean>(false);
   const router = useRouter()
   const { isLoading, session, error } = useSessionContext();
   const user = session?.user
@@ -55,44 +57,75 @@ const AccountEditProfile = () => {
     e.preventDefault();
     try {
       await updateUser(username, firstName, lastName);
-      alert('Update successful!');
+      setErrorMessage(null);
+      setSuccessMessage('Profile updated successfully!');
     } catch (error) {
-      alert('Failed to update user info.');
+      setErrorMessage('Failed to update user info.');
     }
   };
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      try {
-        await deleteUser(user?.id);
-        alert('Account deleted successfully!');
-        signOut();
-        router.push('/login');
-      } catch (error) {
-        alert('Failed to delete account.');
-      }
+  const handleDeleteProfile = async () => {
+    try {
+      await deleteUser(user?.id);
+      signOut();
+      router.push('/login');
+    } catch (error) {
+      setErrorMessage('Failed to delete profile.');
     }
   };
+
+  const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   return (
-    <Box w="full" bg="white" p={8} borderWidth={1} borderRadius={8}>
+    <Box width={formWidth}>
+      {errorMessage && (
+        <Alert borderRadius={20} mb={5} status='error'>
+          <AlertIcon />
+          {errorMessage}
+        </Alert>
+      )}
+      {successMessage && (
+        <Alert borderRadius={20} mb={5} status='success'>
+          <AlertIcon />
+          {successMessage}
+        </Alert>
+      )}
+      <Heading textAlign="center" marginBottom="2em">Edit Profile</Heading>
       <form onSubmit={handleSubmit}>
-        <VStack spacing={4}>
-          <FormControl id="firstName">
-            <FormLabel>First Name:</FormLabel>
-            <Input type="text" value={firstName} onChange={handleFirstNameChange} />
-          </FormControl>
-          <FormControl id="lastName">
-            <FormLabel>Last Name:</FormLabel>
-            <Input type="text" value={lastName} onChange={handleLastNameChange} />
-          </FormControl>
-          <FormControl id="username">
-            <FormLabel>Username:</FormLabel>
-            <Input type="text" value={username} onChange={handleUsernameChange} />
-          </FormControl>
-          <Button colorScheme="blue" type="submit">Update Profile</Button>
-          <Button colorScheme="red" mt={4} onClick={handleDelete}>Delete Profile</Button>
-        </VStack>
+        <Flex direction="column" marginBottom="1em">
+          <Input
+            bg="white"
+            type="text"
+            id="firstName"
+            name="firstName"
+            value={firstName}
+            onChange={handleFirstNameChange}
+            placeholder="First Name"
+            marginBottom="1em"
+          />
+          <Input
+            bg="white"
+            type="text"
+            id="lastName"
+            name="lastName"
+            value={lastName}
+            onChange={handleLastNameChange}
+            placeholder="Last Name"
+            marginBottom="1em"
+          />
+          <Input
+            bg="white"
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={handleUsernameChange}
+            placeholder="Username"
+            marginBottom="1em"
+          />
+          <Button type="submit" colorScheme="blue" marginBottom="1em">Update Profile</Button>
+          <Button colorScheme="red" onClick={handleDeleteProfile}>Delete Profile</Button>
+        </Flex>
       </form>
     </Box>
   )
