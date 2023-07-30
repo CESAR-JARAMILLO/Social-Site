@@ -112,27 +112,30 @@ export async function getCurrentSession() {
   }
 }
 
-export async function updateUser(email: string, fullName: string, username: string, avatarUrl: string) {
+export async function updateUser(username: string, firstName: string, lastName: string) {
   try {
-    const { data: authData, error: authError } = await supabase.auth.updateUser({
-      email: email,
-    });
+    const userResponse = await supabase.auth.getUser();
 
-    if (authError) {
-      throw authError;
-    }
+    if (!userResponse || !userResponse.data.user) throw new Error('Not authenticated');
 
-    const { data: userData, error: userError } = await supabase.from('profiles').update({
-      full_name: fullName,
-      username: username,
-      avatar_url: avatarUrl
-    }).eq('id', authData.user.id);
+    const user = userResponse.data.user;
+    const fullName = `${firstName} ${lastName}`;
+
+    const { data: userData, error: userError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: fullName,
+        username: username,
+        first_name: firstName,
+        last_name: lastName
+      })
+      .eq('id', user?.id);
 
     if (userError) {
       throw userError;
     }
 
-    return { authData, userData };
+    return { userData };
   } catch (error) {
     console.error('Error updating user:', error);
     throw error;
