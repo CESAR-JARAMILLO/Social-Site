@@ -6,10 +6,9 @@ import { useRouter } from 'next/router';
 import { Button, FormControl, FormLabel, Input, VStack, Box } from '@chakra-ui/react';
 
 const AccountEditProfile = () => {
-  const [email, setEmail] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [username, setUsername] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
   const router = useRouter()
   const { isLoading, session, error } = useSessionContext();
   const user = session?.user
@@ -18,14 +17,13 @@ const AccountEditProfile = () => {
     const fetchAndSetUserData = async () => {
       const userProfile = await getCurrentUserProfile();
   
-      if (user && user.email) {
-        setEmail(user.email);
-      }
-  
       if (userProfile && userProfile[0]) {
-        setFullName(userProfile[0].full_name);
+        const fullName = userProfile[0].full_name;
+        const names = fullName.split(' ');
+
+        setFirstName(names[0]);
+        setLastName(names[1] || '');
         setUsername(userProfile[0].username);
-        setAvatarUrl(userProfile[0].avatar_url);
       } else {
         router.push('/login');
       }
@@ -41,12 +39,12 @@ const AccountEditProfile = () => {
     );
   }
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFirstName(e.target.value);
   };
 
-  const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFullName(e.target.value);
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLastName(e.target.value);
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,7 +54,7 @@ const AccountEditProfile = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateUser(email, fullName, username, avatarUrl);
+      await updateUser(username, firstName, lastName);
       alert('Update successful!');
     } catch (error) {
       alert('Failed to update user info.');
@@ -80,13 +78,13 @@ const AccountEditProfile = () => {
     <Box w="full" bg="white" p={8} borderWidth={1} borderRadius={8}>
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
-          <FormControl id="email">
-            <FormLabel>Email:</FormLabel>
-            <Input type="email" value={email} onChange={handleEmailChange} />
+          <FormControl id="firstName">
+            <FormLabel>First Name:</FormLabel>
+            <Input type="text" value={firstName} onChange={handleFirstNameChange} />
           </FormControl>
-          <FormControl id="fullName">
-            <FormLabel>Full Name:</FormLabel>
-            <Input type="text" value={fullName} onChange={handleFullNameChange} />
+          <FormControl id="lastName">
+            <FormLabel>Last Name:</FormLabel>
+            <Input type="text" value={lastName} onChange={handleLastNameChange} />
           </FormControl>
           <FormControl id="username">
             <FormLabel>Username:</FormLabel>
