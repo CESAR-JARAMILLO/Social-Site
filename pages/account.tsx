@@ -45,12 +45,15 @@ const Account = () => {
   return (
     <>
       {completedSignup ? (
-        <>
+        <Box minHeight="100vh" mt={10}>
           <AccountHeader setActiveComponent={setActiveComponent} />
           {activeComponent === 'posts' && <AccountPostCard />}
           {activeComponent === 'images' && <AccountImagesCard />}
-          {activeComponent === 'edit' && <AccountEditProfile />}
-        </>
+          {activeComponent === 'edit' &&
+            <Flex mt={6} alignItems="center" justifyContent="center">
+              <AccountEditProfile />
+            </Flex>}
+        </Box>
       ) : (
         <Box minHeight="100vh" mt={10}>
           <Flex mt="6em" alignItems="center" justifyContent="center">
