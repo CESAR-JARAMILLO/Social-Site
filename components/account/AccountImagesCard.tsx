@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUserPhotos } from '@/pages/api/photosAuth';
 import { useUser } from '@supabase/auth-helpers-react';
-import { Image } from '@chakra-ui/react';
+import { Box, Image, Center } from '@chakra-ui/react';
 
 const AccountImagesCard = () => {
   const [photos, setPhotos] = useState<string[]>([]);
@@ -23,13 +23,29 @@ const AccountImagesCard = () => {
   }, [user?.id]);
 
   return (
-    <div>
+    <Box
+      display="grid"
+      gridTemplateColumns={{
+        base: "1fr",
+        sm: "repeat(2, 1fr)",
+        md: "repeat(3, 1fr)",
+        lg: "repeat(4, 1fr)",
+      }}
+      px={{sm: 4}}
+      gap={6}
+      width="100%"
+    >
       {photos.map((url, index) => (
-        <div key={index} style={{ position: 'relative', width: '100%', height: 'auto' }}>
-          <Image src={url} alt="User uploaded" objectFit='cover' /> 
-        </div>
+        <Center key={index}>
+          <Image
+            src={url}
+            alt="User uploaded"
+            objectFit="cover"
+            boxSize="250px"
+          />
+        </Center>
       ))}
-    </div>
+    </Box>
   );
 };
 

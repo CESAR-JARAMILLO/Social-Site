@@ -48,7 +48,13 @@ const Account = () => {
         <Box minHeight="100vh" mt={10}>
           <AccountHeader setActiveComponent={setActiveComponent} />
           {activeComponent === 'posts' && <AccountPostCard />}
-          {activeComponent === 'images' && <AccountImagesCard />}
+          {activeComponent === 'images' && (
+            <Flex width="100%" justifyContent="center">
+              <Box maxW="1200px" w="100%">
+                <AccountImagesCard />
+              </Box>
+            </Flex>
+          )}
           {activeComponent === 'edit' &&
             <Flex mt={6} alignItems="center" justifyContent="center">
               <AccountEditProfile />
@@ -62,7 +68,7 @@ const Account = () => {
         </Box>
       )}
     </>
-  )
+  )  
 }
 
 export default Account;
