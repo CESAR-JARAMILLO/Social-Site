@@ -8,9 +8,10 @@ interface AccountHeaderProps {
   setActiveComponent: (componentName: string) => void;
   avatarUrl: string | null;
   backgroundUrl: string | null;
+  fullName: string | null;
 }
 
-const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent, avatarUrl, backgroundUrl }) => {
+const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent, avatarUrl, backgroundUrl, fullName }) => {
   const [uploading, setUploading] = useState(false)
   const [localAvatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [localBackgroundUrl, setBackgroundUrl] = useState<string | null>(null)
@@ -113,7 +114,7 @@ const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent, avata
       <Flex direction="column" align={isLargerThanMD ? "center" : "flex-start"} ml={isLargerThanMD ? "none" : 6}>
         <Box position="relative">
           <Avatar 
-            name="Cesar Jaramillo"
+            name={fullName || "user"}
             src={localAvatarUrl || undefined}
             boxSize="100px"
             position="relative"

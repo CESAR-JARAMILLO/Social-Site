@@ -14,6 +14,7 @@ const Account = () => {
   const [completedSignup, setCompletedSignup] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+  const [fullName, setFullName] = useState<string | null>(null);
   const { isLoading, session } = useSessionContext();
   const [userId, setUserId] = useState('');
   const router = useRouter();
@@ -30,6 +31,7 @@ const Account = () => {
             setUserId(currentUserProfile[0]?.id);
             setAvatarUrl(currentUserProfile[0]?.avatar_url);
             setBackgroundUrl(currentUserProfile[0]?.background_url)
+            setFullName(currentUserProfile[0]?.full_name)
           } else {
             console.error("User profile is undefined.");
           }
@@ -54,6 +56,7 @@ const Account = () => {
             setActiveComponent={setActiveComponent} 
             avatarUrl={avatarUrl} 
             backgroundUrl={backgroundUrl}
+            fullName={fullName}
           />
           {activeComponent === 'posts' && <AccountPostCard />}
           {activeComponent === 'images' && (
