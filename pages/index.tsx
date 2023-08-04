@@ -13,10 +13,7 @@ const Home = () => {
   const { isLoading, session, error } = useSessionContext();
   const [userId, setUserId] = useState('')
 
-  const handleLogout = async () => {
-    await signOut();
-    router.push('/login')
-  };
+  
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -51,7 +48,6 @@ const Home = () => {
         <>
           <PostFormCard />
           <PostCard />
-          <button onClick={handleLogout}>Logout</button>
         </>
       ) : (
         <Box minHeight="100vh" mt={10}>
