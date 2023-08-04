@@ -13,6 +13,7 @@ const Account = () => {
   const [activeComponent, setActiveComponent] = useState('posts');
   const [completedSignup, setCompletedSignup] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const { isLoading, session } = useSessionContext();
   const [userId, setUserId] = useState('');
   const router = useRouter();
@@ -28,6 +29,7 @@ const Account = () => {
             setCompletedSignup(currentUserProfile[0]?.completed_signup);
             setUserId(currentUserProfile[0]?.id);
             setAvatarUrl(currentUserProfile[0]?.avatar_url);
+            setBackgroundUrl(currentUserProfile[0]?.background_url)
           } else {
             console.error("User profile is undefined.");
           }
@@ -50,7 +52,8 @@ const Account = () => {
         <Box minHeight="100vh" mt={10}>
           <AccountHeader 
             setActiveComponent={setActiveComponent} 
-            url={avatarUrl} 
+            avatarUrl={avatarUrl} 
+            backgroundUrl={backgroundUrl}
           />
           {activeComponent === 'posts' && <AccountPostCard />}
           {activeComponent === 'images' && (
