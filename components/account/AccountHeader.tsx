@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Box, Avatar, Flex, useMediaQuery, Text, Stack, Link, Icon, Spinner } from "@chakra-ui/react"
-import { FiCamera } from 'react-icons/fi'
+import { Box, Avatar, Flex, useMediaQuery, Text, Stack, Link, Icon, Spinner, IconButton } from "@chakra-ui/react"
+import { FiCamera, FiBook, FiImage, FiEdit } from 'react-icons/fi'
 import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -130,10 +130,34 @@ const AccountHeader: React.FC<AccountHeaderProps> = ({ setActiveComponent, avata
           Cesar Jaramillo
         </Text>
       </Flex>
-      <Stack mt={20} ml={isLargerThanMD ? "none" : 6} direction="row" justify={isLargerThanMD ? "center" : "flex-start"} spacing={4} mb="4">
-        <Link onClick={() => setActiveComponent('posts')}>Posts</Link>
-        <Link onClick={() => setActiveComponent('images')}>Photos</Link>
-        <Link onClick={() => setActiveComponent('edit')}>Edit Profile</Link>
+      <Stack mt={20} ml={isLargerThanMD ? "none" : 6} direction="row" justify="center" spacing={isLargerThanMD ? "10rem" : 20} mb="4">
+      <Link as="a">
+        <IconButton
+          aria-label="Posts"
+          icon={<FiBook size={24} />}
+          color="black"
+          variant="ghost"
+          onClick={() => setActiveComponent('posts')}
+        />
+      </Link>
+      <Link as="a">
+        <IconButton
+          aria-label="Images"
+          icon={<FiImage size={24} />}
+          color="black"
+          variant="ghost"
+          onClick={() => setActiveComponent('images')}
+        />
+      </Link>
+      <Link as="a">
+        <IconButton
+          aria-label="Edit"
+          icon={<FiEdit size={24} />}
+          color="black"
+          variant="ghost"
+          onClick={() => setActiveComponent('edit')}
+        />
+      </Link>
       </Stack>
     </Flex>
   )
