@@ -14,6 +14,7 @@ const AccountEditProfile = () => {
   const router = useRouter()
   const { isLoading, session, error } = useSessionContext();
   const user = session?.user
+  const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   useEffect(() => {
     const fetchAndSetUserData = async () => {
@@ -73,8 +74,6 @@ const AccountEditProfile = () => {
       setErrorMessage('Failed to delete profile.');
     }
   };
-
-  const formWidth = useBreakpointValue({ base: "90%", md: "60%", lg: "40%" });
 
   return (
     <Box width={formWidth}>
